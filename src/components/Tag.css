@@ -1,0 +1,41 @@
+.rumbo-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-main);
+  background-color: transparent;
+  line-height: 1.2;
+}
+
+.rumbo-tag__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.rumbo-tag--proximo {
+  border-color: var(--color-status-proximo);
+  color: var(--color-status-proximo);
+}
+
+.rumbo-tag--progreso {
+  border-color: var(--color-status-progreso);
+  color: var(--color-status-progreso);
+}
+
+.rumbo-tag--finalizado {
+  border-color: var(--color-status-finalizado);
+  color: var(--color-status-finalizado);
+}
+
+.rumbo-tag--accent {
+  background-color: var(--color-accent);
+  color: var(--color-accent-text);
+  border-color: var(--color-accent);
+}

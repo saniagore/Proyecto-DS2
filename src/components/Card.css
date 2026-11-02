@@ -1,0 +1,23 @@
+.rumbo-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text-main);
+  box-shadow: none;
+}
+
+.rumbo-card--p-none {
+  padding: 0;
+}
+
+.rumbo-card--p-sm {
+  padding: 12px;
+}
+
+.rumbo-card--p-md {
+  padding: 20px;
+}
+
+.rumbo-card--p-lg {
+  padding: 32px;
+}
