@@ -1,0 +1,25 @@
+@import './styles/variables.css';
+
+/* Tipografía y enlaces */
+a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+a:hover {
+  filter: brightness(1.15);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  color: inherit;
+}
