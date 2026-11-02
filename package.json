@@ -10,6 +10,7 @@
     "format:check": "prettier --check .",
     "format": "prettier --write .",
     "type-check": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "preview": "vite preview",
     "prepare": "husky"
@@ -33,6 +34,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
     "prettier": "^3.9.10",
+    "prisma": "^5.22.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.69.0",
     "vite": "^8.3.0",

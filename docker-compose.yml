@@ -18,6 +18,29 @@ services:
     depends_on:
       cache:
         condition: service_healthy
+      db:
+        condition: service_healthy
+    networks:
+      - internal-net
+
+  db:
+    container_name: supabase-postgres-local
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_local_password}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-gestion_tareas}
+    ports:
+      - '5432:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-gestion_tareas}']
+      interval: 5s
+      timeout: 3s
+      retries: 5
     networks:
       - internal-net
 
@@ -42,4 +65,5 @@ networks:
     driver: bridge
 
 volumes:
+  db_data:
   redis_data:
