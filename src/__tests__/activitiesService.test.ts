@@ -67,13 +67,13 @@ vi.mock('../lib/supabaseClient', () => ({
             }),
           }),
           update: (payload: { estado: string }) => ({
-            eq: (campo: string, id: string) => {
+            eq: (_campo: string, id: string) => {
               estadoSimulado = estadoSimulado.map((a) => (a.id === id ? { ...a, ...payload } : a));
               return Promise.resolve({ error: null });
             },
           }),
           delete: () => ({
-            eq: (campo: string, id: string) => {
+            eq: (_campo: string, id: string) => {
               estadoSimulado = estadoSimulado.filter((a) => a.id !== id);
               return Promise.resolve({ error: null });
             },
