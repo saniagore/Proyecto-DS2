@@ -13,7 +13,7 @@ export interface Actividad {
   titulo: string;
   descripcion?: string;
   categoria: CategoriaActividad;
-  fecha: string; // fecha_limite formateada como YYYY-MM-DD
+  fecha: string | null; // fecha_limite formateada como YYYY-MM-DD (null si no tiene)
   estado: EstadoActividad;
 }
 
@@ -39,6 +39,13 @@ export interface NuevaActividadInput {
   titulo: string;
   descripcion?: string;
   categoria: CategoriaActividad;
+  fecha: string;
+}
+
+/** Campos editables de una actividad existente */
+export interface ActualizarActividadInput {
+  titulo: string;
+  descripcion?: string;
   fecha: string;
 }
 

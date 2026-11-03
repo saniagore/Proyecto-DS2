@@ -60,3 +60,29 @@
   gap: 6px;
   margin-top: 4px;
 }
+
+.rumbo-task-card__description {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  word-break: break-word;
+}
+
+.rumbo-task-card__meta {
+  flex-wrap: wrap;
+}
+
+.rumbo-task-card__due {
+  padding: 1px 6px;
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.rumbo-task-card__due--vencida {
+  color: var(--color-error);
+}
+
+.rumbo-task-card__due--hoy {
+  color: var(--color-accent);
+}

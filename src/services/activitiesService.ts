@@ -2,6 +2,7 @@ import { supabase } from '../lib/supabaseClient';
 import type {
   Actividad,
   ActividadDb,
+  ActualizarActividadInput,
   EstadoActividad,
   NuevaActividadInput,
 } from '../types/activity';
@@ -16,9 +17,14 @@ function mapearActividadDb(db: ActividadDb): Actividad {
     descripcion: db.descripcion ?? undefined,
     // La tabla no tiene columna `categoria`; la derivamos de la descripción o dejamos 'Personal'
     categoria: 'Personal',
-    fecha: db.fecha_limite ? db.fecha_limite.slice(0, 10) : new Date().toISOString().slice(0, 10),
+    fecha: db.fecha_limite ? db.fecha_limite.slice(0, 10) : null,
     estado: ESTADO_DB_A_UI[db.estado] ?? 'proximo',
   };
+}
+
+/** Convierte YYYY-MM-DD al formato timestamptz que guarda `fecha_limite` */
+function aFechaLimiteDb(fecha?: string | null): string | null {
+  return fecha ? `${fecha}T00:00:00+00:00` : null;
 }
 
 // ─── Servicio de actividades conectado a Supabase ─────────────────────────────
@@ -67,15 +73,17 @@ export const activitiesService = {
 
   /**
    * Crea una nueva actividad en Supabase.
+   * Si se indica `idUsuario`, también la asigna a ese usuario para que
+   * aparezca en `obtenerPorUsuario` (sin esto, desaparece al recargar).
    */
-  async crear(input: NuevaActividadInput): Promise<Actividad> {
+  async crear(input: NuevaActividadInput, idUsuario?: string): Promise<Actividad> {
     const { data, error } = await supabase
       .from('actividades')
       .insert({
         titulo: input.titulo.trim(),
-        descripcion: input.descripcion?.trim() ?? null,
+        descripcion: input.descripcion?.trim() || null,
         estado: 'pendiente' as const,
-        fecha_limite: input.fecha ? `${input.fecha}T00:00:00+00:00` : null,
+        fecha_limite: aFechaLimiteDb(input.fecha),
       })
       .select()
       .single<ActividadDb>();
@@ -84,14 +92,39 @@ export const activitiesService = {
       throw new Error(error?.message ?? 'Error al crear la actividad');
     }
 
+    if (idUsuario) {
+      await this.asignarUsuario(data.id, idUsuario);
+    }
+
+    return mapearActividadDb(data);
+  },
+
+  /**
+   * Edita título, descripción y fecha límite de una actividad.
+   */
+  async actualizar(id: string, cambios: ActualizarActividadInput): Promise<Actividad> {
+    const { data, error } = await supabase
+      .from('actividades')
+      .update({
+        titulo: cambios.titulo.trim(),
+        descripcion: cambios.descripcion?.trim() || null,
+        fecha_limite: aFechaLimiteDb(cambios.fecha),
+      })
+      .eq('id', id)
+      .select()
+      .single<ActividadDb>();
+
+    if (error || !data) {
+      throw new Error(error?.message ?? 'Error al editar la actividad');
+    }
+
     return mapearActividadDb(data);
   },
 
   /**
    * Actualiza el estado de una actividad en Supabase.
-   * Retorna la lista actualizada de actividades.
    */
-  async actualizarEstado(id: string, nuevoEstado: EstadoActividad): Promise<Actividad[]> {
+  async actualizarEstado(id: string, nuevoEstado: EstadoActividad): Promise<void> {
     const estadoDb = ESTADO_UI_A_DB[nuevoEstado];
 
     const { error } = await supabase.from('actividades').update({ estado: estadoDb }).eq('id', id);
@@ -99,22 +132,17 @@ export const activitiesService = {
     if (error) {
       throw new Error(error.message ?? 'Error al actualizar el estado');
     }
-
-    return this.obtenerTodas();
   },
 
   /**
    * Elimina una actividad (y sus asignaciones en cascada) de Supabase.
-   * Retorna la lista actualizada de actividades.
    */
-  async eliminar(id: string): Promise<Actividad[]> {
+  async eliminar(id: string): Promise<void> {
     const { error } = await supabase.from('actividades').delete().eq('id', id);
 
     if (error) {
       throw new Error(error.message ?? 'Error al eliminar la actividad');
     }
-
-    return this.obtenerTodas();
   },
 
   /**
