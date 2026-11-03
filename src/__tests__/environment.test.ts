@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-describe('Configuración del Entorno Backend', () => {
-  it('debería ejecutar las pruebas correctamente en el pipeline CI/CD', () => {
-    expect(true).toBe(true);
+describe('environment variables', () => {
+  it('sanity check: vitest runs', () => {
+    expect(1 + 1).toBe(2);
   });
 });
