@@ -45,10 +45,27 @@ export function formatearFechaCorta(fechaInput: string | Date): string {
 /**
  * Retorna la fecha de hoy en formato YYYY-MM-DD para inicializar inputs de tipo date.
  */
-export function obtenerFechaHoyISO(): string {
-  const hoy = new Date();
+export function obtenerFechaHoyISO(hoy: Date = new Date()): string {
   const year = hoy.getFullYear();
   const month = String(hoy.getMonth() + 1).padStart(2, '0');
   const day = String(hoy.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+export type EstadoFechaLimite = 'vencida' | 'hoy' | 'a-tiempo';
+
+/**
+ * Indica si una fecha límite (YYYY-MM-DD) ya pasó, vence hoy o sigue a tiempo.
+ * Retorna null si la actividad no tiene fecha.
+ */
+export function evaluarFechaLimite(
+  fecha: string | null,
+  hoy: Date = new Date()
+): EstadoFechaLimite | null {
+  if (!fecha) return null;
+  const hoyISO = obtenerFechaHoyISO(hoy);
+  // Las cadenas YYYY-MM-DD se pueden comparar lexicográficamente
+  if (fecha < hoyISO) return 'vencida';
+  if (fecha === hoyISO) return 'hoy';
+  return 'a-tiempo';
 }
