@@ -1,0 +1,150 @@
+.rumbo-login-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  background-color: var(--color-bg-page);
+}
+
+/* Panel de marca (izquierda) */
+.rumbo-brand-panel {
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.rumbo-brand-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rumbo-brand-logo__mark {
+  color: var(--color-accent);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.rumbo-brand-logo__text {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--color-accent);
+  text-transform: uppercase;
+}
+
+.rumbo-brand-panel__center {
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 60px 0;
+}
+
+.rumbo-brand-panel__title {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--color-text-main);
+  letter-spacing: -0.5px;
+}
+
+.rumbo-brand-panel__desc {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.rumbo-brand-panel__bottom {
+  padding-top: 24px;
+}
+
+.rumbo-brand-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Área de formulario (derecha) */
+.rumbo-login-form-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+}
+
+.rumbo-login-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.rumbo-form-header {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rumbo-form-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.rumbo-form-subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+.rumbo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rumbo-form-footer {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.rumbo-form-footer__text {
+  color: var(--color-text-muted);
+}
+
+.rumbo-form-link {
+  font-weight: 600;
+}
+
+/* Responsivo para móviles y tabletas menores a 900px */
+@media (max-width: 899px) {
+  .rumbo-login-layout {
+    grid-template-columns: 1fr;
+    min-height: 100vh;
+  }
+
+  .rumbo-brand-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    padding: 32px 20px;
+  }
+
+  .rumbo-brand-panel__center {
+    margin: 28px 0;
+  }
+
+  .rumbo-brand-panel__title {
+    font-size: 24px;
+  }
+
+  .rumbo-login-form-area {
+    padding: 32px 16px 48px;
+  }
+
+  .rumbo-login-card {
+    max-width: 100%;
+  }
+}
