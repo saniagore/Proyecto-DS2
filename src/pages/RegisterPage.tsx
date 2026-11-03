@@ -35,6 +35,7 @@ export const RegisterPage: React.FC = () => {
     email?: string;
     password?: string;
     confirmPassword?: string;
+    general?: string;
   }>({});
   const [enviando, setEnviando] = useState(false);
 
@@ -67,10 +68,14 @@ export const RegisterPage: React.FC = () => {
         usoPrincipal,
       });
       navigate('/panel');
-    } catch {
-      setErrores({
-        email: 'Ocurrió un error al crear la cuenta. Inténtalo de nuevo.',
-      });
+    } catch (err) {
+      const mensaje = err instanceof Error ? err.message : 'Ocurrió un error al crear la cuenta.';
+      // Si el error es de rate limit, lo ponemos como error general (no de campo)
+      if (mensaje.toLowerCase().includes('espera') || mensaje.toLowerCase().includes('intento')) {
+        setErrores({ general: mensaje });
+      } else {
+        setErrores({ email: mensaje });
+      }
     } finally {
       setEnviando(false);
     }
@@ -204,6 +209,12 @@ export const RegisterPage: React.FC = () => {
             <Button type="submit" variant="primary" size="lg" fullWidth disabled={enviando}>
               {enviando ? 'Creando cuenta…' : 'Crear mi cuenta'}
             </Button>
+
+            {errores.general && (
+              <p className="rumbo-form-error-general" role="alert">
+                {errores.general}
+              </p>
+            )}
 
             <div className="rumbo-form-footer">
               <span className="rumbo-form-footer__text">¿Ya tienes cuenta?</span>{' '}

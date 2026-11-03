@@ -30,6 +30,34 @@ function limpiarCache(): void {
   }
 }
 
+// ─── Traducción de errores de Supabase a mensajes en español ─────────────────
+
+function traducirErrorSupabase(mensaje: string): string {
+  const m = mensaje.toLowerCase();
+  if (m.includes('rate limit') || m.includes('too many requests') || m.includes('429')) {
+    return 'Demasiados intentos. Por favor espera unos minutos y vuelve a intentarlo.';
+  }
+  if (m.includes('user already registered') || m.includes('already been registered')) {
+    return 'Ya existe una cuenta con ese correo electrónico. Intenta iniciar sesión.';
+  }
+  if (m.includes('invalid login credentials') || m.includes('invalid email or password')) {
+    return 'Correo o contraseña incorrectos. Verifica tus datos.';
+  }
+  if (m.includes('email not confirmed')) {
+    return 'Debes confirmar tu correo electrónico antes de iniciar sesión. Revisa tu bandeja de entrada.';
+  }
+  if (m.includes('password should be at least')) {
+    return 'La contraseña debe tener al menos 6 caracteres.';
+  }
+  if (m.includes('unable to validate email address')) {
+    return 'El correo electrónico no es válido.';
+  }
+  if (m.includes('network') || m.includes('fetch')) {
+    return 'Error de conexión. Verifica tu acceso a internet.';
+  }
+  return 'Ocurrió un error inesperado. Inténtalo de nuevo.';
+}
+
 // ─── Mapeo Supabase → modelo UI ───────────────────────────────────────────────
 
 function mapearUsuarioDb(db: UsuarioDb): Usuario {
@@ -60,7 +88,7 @@ export const authService = {
     });
 
     if (error || !data.user) {
-      throw new Error(error?.message ?? 'Error al iniciar sesión');
+      throw new Error(traducirErrorSupabase(error?.message ?? 'Error al iniciar sesión'));
     }
 
     // Buscar perfil en la tabla pública `usuarios`
@@ -100,7 +128,7 @@ export const authService = {
     });
 
     if (error || !data.user) {
-      throw new Error(error?.message ?? 'Error al crear la cuenta');
+      throw new Error(traducirErrorSupabase(error?.message ?? 'Error al crear la cuenta'));
     }
 
     // 2. Insertar perfil en la tabla `usuarios`
