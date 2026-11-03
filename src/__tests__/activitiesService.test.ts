@@ -23,6 +23,7 @@ const mockActividades = [
 ];
 
 let estadoSimulado = [...mockActividades];
+let asignacionesSimuladas: { id_actividad: string; id_usuario: string }[] = [];
 
 const buildChain = (result: unknown) => ({
   select: () => buildChain(result),
@@ -66,10 +67,19 @@ vi.mock('../lib/supabaseClient', () => ({
                 }),
             }),
           }),
-          update: (payload: { estado: string }) => ({
+          update: (payload: Record<string, unknown>) => ({
             eq: (_campo: string, id: string) => {
               estadoSimulado = estadoSimulado.map((a) => (a.id === id ? { ...a, ...payload } : a));
-              return Promise.resolve({ error: null });
+              // Soporta tanto `await update().eq()` como `update().eq().select().single()`
+              return Object.assign(Promise.resolve({ error: null }), {
+                select: () => ({
+                  single: () =>
+                    Promise.resolve({
+                      data: estadoSimulado.find((a) => a.id === id) ?? null,
+                      error: null,
+                    }),
+                }),
+              });
             },
           }),
           delete: () => ({
@@ -78,6 +88,14 @@ vi.mock('../lib/supabaseClient', () => ({
               return Promise.resolve({ error: null });
             },
           }),
+        };
+      }
+      if (tabla === 'asignaciones') {
+        return {
+          insert: (payload: { id_actividad: string; id_usuario: string }) => {
+            asignacionesSimuladas.push(payload);
+            return Promise.resolve({ error: null });
+          },
         };
       }
       return buildChain(null);
@@ -91,6 +109,7 @@ const { activitiesService } = await import('../services/activitiesService');
 describe('activitiesService (Supabase)', () => {
   beforeEach(() => {
     estadoSimulado = [...mockActividades];
+    asignacionesSimuladas = [];
   });
 
   afterEach(() => {
@@ -126,6 +145,50 @@ describe('activitiesService (Supabase)', () => {
     const lista = await activitiesService.obtenerTodas();
     const actualizada = lista.find((a) => a.id === 'act-2');
     expect(actualizada?.estado).toBe('progreso');
+  });
+
+  it('mapea fecha_limite null como actividad sin fecha', async () => {
+    const list = await activitiesService.obtenerTodas();
+    expect(list.find((a) => a.id === 'act-1')?.fecha).toBeNull();
+    expect(list.find((a) => a.id === 'act-2')?.fecha).toBe('2026-12-01');
+  });
+
+  it('guarda la fecha límite y la descripción al crear', async () => {
+    const nueva = await activitiesService.crear({
+      titulo: '  Con fecha  ',
+      descripcion: '  detalle  ',
+      categoria: 'Estudio',
+      fecha: '2026-12-20',
+    });
+    expect(nueva.titulo).toBe('Con fecha');
+    expect(nueva.descripcion).toBe('detalle');
+    expect(nueva.fecha).toBe('2026-12-20');
+  });
+
+  it('asigna la actividad creada al usuario indicado', async () => {
+    const nueva = await activitiesService.crear(
+      { titulo: 'Asignada', categoria: 'Trabajo', fecha: '2026-12-15' },
+      'user-1'
+    );
+    expect(asignacionesSimuladas).toEqual([{ id_actividad: nueva.id, id_usuario: 'user-1' }]);
+  });
+
+  it('no crea asignación si no hay usuario', async () => {
+    await activitiesService.crear({ titulo: 'Sin usuario', categoria: 'Trabajo', fecha: '' });
+    expect(asignacionesSimuladas).toHaveLength(0);
+  });
+
+  it('edita título, descripción y fecha límite', async () => {
+    const editada = await activitiesService.actualizar('act-2', {
+      titulo: ' Documentar API v2 ',
+      descripcion: '',
+      fecha: '2026-12-10',
+    });
+    expect(editada.titulo).toBe('Documentar API v2');
+    expect(editada.descripcion).toBeUndefined();
+    expect(editada.fecha).toBe('2026-12-10');
+    // El estado no se modifica al editar
+    expect(editada.estado).toBe('proximo');
   });
 
   it('elimina una actividad por id', async () => {
