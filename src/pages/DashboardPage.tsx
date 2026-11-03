@@ -29,13 +29,15 @@ export const DashboardPage: React.FC = () => {
   const { navigate } = useRouter();
   const {
     actividades,
+    cargando,
+    error,
     filtro,
     setFiltro,
     agregarActividad,
     cambiarEstado,
     eliminarActividad,
     conteos,
-  } = useActivities();
+  } = useActivities(usuario?.id);
 
   // Estado para el formulario de nueva actividad
   const [titulo, setTitulo] = useState('');
@@ -171,6 +173,18 @@ export const DashboardPage: React.FC = () => {
             <p className="rumbo-stat-card__value">{conteos.finalizado}</p>
           </Card>
         </section>
+
+        {/* Indicador de carga y error de Supabase */}
+        {cargando && (
+          <p className="rumbo-loading" role="status" aria-live="polite">
+            Cargando actividades…
+          </p>
+        )}
+        {error && !cargando && (
+          <p className="rumbo-error" role="alert">
+            {error}
+          </p>
+        )}
 
         {/* 3. Formulario para agregar una actividad */}
         <Card padding="md" className="rumbo-add-card">

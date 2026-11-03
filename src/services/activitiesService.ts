@@ -1,74 +1,138 @@
-import type { Actividad, EstadoActividad, NuevaActividadInput } from '../types/activity';
-import { ACTIVIDADES_INICIALES } from '../data/mockActivities';
+import { supabase } from '../lib/supabaseClient';
+import type {
+  Actividad,
+  ActividadDb,
+  EstadoActividad,
+  NuevaActividadInput,
+} from '../types/activity';
+import { ESTADO_DB_A_UI, ESTADO_UI_A_DB } from '../types/activity';
 
-const STORAGE_KEY = 'rumbo_actividades_v1';
+// ─── Helpers de mapeo Supabase ↔ UI ──────────────────────────────────────────
 
-// Almacenamiento en memoria como respaldo cuando localStorage no esté disponible (por ejemplo en tests)
-const memoriaFallback = new Map<string, string>();
-
-function obtenerItem(clave: string): string | null {
-  if (typeof localStorage !== 'undefined') {
-    return localStorage.getItem(clave);
-  }
-  return memoriaFallback.get(clave) || null;
+function mapearActividadDb(db: ActividadDb): Actividad {
+  return {
+    id: db.id,
+    titulo: db.titulo,
+    descripcion: db.descripcion ?? undefined,
+    // La tabla no tiene columna `categoria`; la derivamos de la descripción o dejamos 'Personal'
+    categoria: 'Personal',
+    fecha: db.fecha_limite ? db.fecha_limite.slice(0, 10) : new Date().toISOString().slice(0, 10),
+    estado: ESTADO_DB_A_UI[db.estado] ?? 'proximo',
+  };
 }
 
-function guardarItem(clave: string, valor: string): void {
-  if (typeof localStorage !== 'undefined') {
-    localStorage.setItem(clave, valor);
-  } else {
-    memoriaFallback.set(clave, valor);
-  }
-}
+// ─── Servicio de actividades conectado a Supabase ─────────────────────────────
 
 export const activitiesService = {
+  /**
+   * Obtiene todas las actividades de Supabase.
+   * Ordena por fecha de creación descendente.
+   */
   async obtenerTodas(): Promise<Actividad[]> {
-    try {
-      const data = obtenerItem(STORAGE_KEY);
-      if (!data) {
-        guardarItem(STORAGE_KEY, JSON.stringify(ACTIVIDADES_INICIALES));
-        return ACTIVIDADES_INICIALES;
-      }
-      return JSON.parse(data) as Actividad[];
-    } catch {
-      return ACTIVIDADES_INICIALES;
+    const { data, error } = await supabase
+      .from('actividades')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .returns<ActividadDb[]>();
+
+    if (error) {
+      console.error('Error al obtener actividades:', error.message);
+      return [];
     }
+
+    return (data ?? []).map(mapearActividadDb);
   },
 
+  /**
+   * Obtiene las actividades asignadas a un usuario específico
+   * mediante la tabla `asignaciones`.
+   */
+  async obtenerPorUsuario(idUsuario: string): Promise<Actividad[]> {
+    const { data, error } = await supabase
+      .from('asignaciones')
+      .select('actividades(*)')
+      .eq('id_usuario', idUsuario)
+      .returns<{ actividades: ActividadDb }[]>();
+
+    if (error) {
+      console.error('Error al obtener actividades del usuario:', error.message);
+      return [];
+    }
+
+    return (data ?? [])
+      .map((row) => row.actividades)
+      .filter(Boolean)
+      .map(mapearActividadDb);
+  },
+
+  /**
+   * Crea una nueva actividad en Supabase.
+   */
   async crear(input: NuevaActividadInput): Promise<Actividad> {
-    const actividades = await this.obtenerTodas();
-    const nueva: Actividad = {
-      id: `act-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-      titulo: input.titulo.trim(),
-      categoria: input.categoria,
-      fecha: input.fecha,
-      estado: 'proximo', // Toda actividad nueva entra en 'proximo'
-    };
-    const actualizadas = [nueva, ...actividades];
-    guardarItem(STORAGE_KEY, JSON.stringify(actualizadas));
-    return nueva;
-  },
+    const { data, error } = await supabase
+      .from('actividades')
+      .insert({
+        titulo: input.titulo.trim(),
+        descripcion: input.descripcion?.trim() ?? null,
+        estado: 'pendiente' as const,
+        fecha_limite: input.fecha ? `${input.fecha}T00:00:00+00:00` : null,
+      })
+      .select()
+      .single<ActividadDb>();
 
-  async actualizarEstado(id: string, nuevoEstado: EstadoActividad): Promise<Actividad[]> {
-    const actividades = await this.obtenerTodas();
-    const actualizadas = actividades.map((act) =>
-      act.id === id ? { ...act, estado: nuevoEstado } : act
-    );
-    guardarItem(STORAGE_KEY, JSON.stringify(actualizadas));
-    return actualizadas;
-  },
-
-  async eliminar(id: string): Promise<Actividad[]> {
-    const actividades = await this.obtenerTodas();
-    const actualizadas = actividades.filter((act) => act.id !== id);
-    guardarItem(STORAGE_KEY, JSON.stringify(actualizadas));
-    return actualizadas;
-  },
-
-  limpiarMemoria(): void {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEY);
+    if (error || !data) {
+      throw new Error(error?.message ?? 'Error al crear la actividad');
     }
-    memoriaFallback.clear();
+
+    return mapearActividadDb(data);
+  },
+
+  /**
+   * Actualiza el estado de una actividad en Supabase.
+   * Retorna la lista actualizada de actividades.
+   */
+  async actualizarEstado(id: string, nuevoEstado: EstadoActividad): Promise<Actividad[]> {
+    const estadoDb = ESTADO_UI_A_DB[nuevoEstado];
+
+    const { error } = await supabase.from('actividades').update({ estado: estadoDb }).eq('id', id);
+
+    if (error) {
+      throw new Error(error.message ?? 'Error al actualizar el estado');
+    }
+
+    return this.obtenerTodas();
+  },
+
+  /**
+   * Elimina una actividad (y sus asignaciones en cascada) de Supabase.
+   * Retorna la lista actualizada de actividades.
+   */
+  async eliminar(id: string): Promise<Actividad[]> {
+    const { error } = await supabase.from('actividades').delete().eq('id', id);
+
+    if (error) {
+      throw new Error(error.message ?? 'Error al eliminar la actividad');
+    }
+
+    return this.obtenerTodas();
+  },
+
+  /**
+   * Asigna una actividad a un usuario creando un registro en `asignaciones`.
+   */
+  async asignarUsuario(idActividad: string, idUsuario: string): Promise<void> {
+    const { error } = await supabase.from('asignaciones').insert({
+      id_actividad: idActividad,
+      id_usuario: idUsuario,
+    });
+
+    if (error) {
+      throw new Error(error.message ?? 'Error al asignar la actividad');
+    }
+  },
+
+  /** @deprecated Solo para compatibilidad con tests anteriores */
+  limpiarMemoria(): void {
+    // No-op: la fuente de verdad es Supabase
   },
 };
