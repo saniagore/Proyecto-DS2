@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Actividad, EstadoActividad } from '../types/activity';
+import type { Actividad, ActualizarActividadInput, EstadoActividad } from '../types/activity';
 import { TaskCard } from './TaskCard';
 import './Column.css';
 
@@ -9,6 +9,7 @@ export interface ColumnProps {
   actividades: Actividad[];
   onCambiarEstado: (id: string, nuevoEstado: EstadoActividad) => void;
   onEliminar: (id: string) => void;
+  onEditar: (id: string, cambios: ActualizarActividadInput) => Promise<unknown>;
 }
 
 export const Column: React.FC<ColumnProps> = ({
@@ -17,6 +18,7 @@ export const Column: React.FC<ColumnProps> = ({
   actividades,
   onCambiarEstado,
   onEliminar,
+  onEditar,
 }) => {
   return (
     <section className={`rumbo-column rumbo-column--${id}`} aria-labelledby={`col-heading-${id}`}>
@@ -45,6 +47,7 @@ export const Column: React.FC<ColumnProps> = ({
                 actividad={act}
                 onCambiarEstado={onCambiarEstado}
                 onEliminar={onEliminar}
+                onEditar={onEditar}
               />
             ))}
           </div>

@@ -19,9 +19,9 @@ interface FiltroItem {
 
 const FILTROS: FiltroItem[] = [
   { id: 'todas', label: 'Todas' },
-  { id: 'proximo', label: 'Próximos' },
+  { id: 'proximo', label: 'Pendientes' },
   { id: 'progreso', label: 'En progreso' },
-  { id: 'finalizado', label: 'Finalizados' },
+  { id: 'finalizado', label: 'Completadas' },
 ];
 
 export const DashboardPage: React.FC = () => {
@@ -34,6 +34,7 @@ export const DashboardPage: React.FC = () => {
     filtro,
     setFiltro,
     agregarActividad,
+    editarActividad,
     cambiarEstado,
     eliminarActividad,
     conteos,
@@ -41,9 +42,12 @@ export const DashboardPage: React.FC = () => {
 
   // Estado para el formulario de nueva actividad
   const [titulo, setTitulo] = useState('');
+  const [descripcion, setDescripcion] = useState('');
   const [categoria, setCategoria] = useState<CategoriaActividad>('Trabajo');
   const [fecha, setFecha] = useState(obtenerFechaHoyISO());
   const [errorTitulo, setErrorTitulo] = useState<string | null>(null);
+  const [errorCrear, setErrorCrear] = useState<string | null>(null);
+  const [creando, setCreando] = useState(false);
 
   const handleCerrarSesion = async () => {
     await logout();
@@ -59,13 +63,23 @@ export const DashboardPage: React.FC = () => {
     }
 
     setErrorTitulo(null);
-    await agregarActividad({
-      titulo: titulo.trim(),
-      categoria,
-      fecha: fecha || obtenerFechaHoyISO(),
-    });
-
-    setTitulo('');
+    setErrorCrear(null);
+    setCreando(true);
+    try {
+      await agregarActividad({
+        titulo: titulo.trim(),
+        descripcion,
+        categoria,
+        fecha: fecha || obtenerFechaHoyISO(),
+      });
+      setTitulo('');
+      setDescripcion('');
+    } catch (err) {
+      setErrorCrear('No se pudo crear la actividad. Inténtalo de nuevo.');
+      console.error(err);
+    } finally {
+      setCreando(false);
+    }
   };
 
   const fechaDeHoy = formatearFechaHoy();
@@ -146,7 +160,7 @@ export const DashboardPage: React.FC = () => {
                 className="rumbo-stat-card__dot rumbo-stat-card__dot--proximo"
                 aria-hidden="true"
               />
-              <span className="rumbo-stat-card__label">Próximos</span>
+              <span className="rumbo-stat-card__label">Pendientes</span>
             </div>
             <p className="rumbo-stat-card__value">{conteos.proximo}</p>
           </Card>
@@ -168,7 +182,7 @@ export const DashboardPage: React.FC = () => {
                 className="rumbo-stat-card__dot rumbo-stat-card__dot--finalizado"
                 aria-hidden="true"
               />
-              <span className="rumbo-stat-card__label">Finalizados</span>
+              <span className="rumbo-stat-card__label">Completadas</span>
             </div>
             <p className="rumbo-stat-card__value">{conteos.finalizado}</p>
           </Card>
@@ -228,7 +242,7 @@ export const DashboardPage: React.FC = () => {
               <div className="rumbo-add-form__field-date">
                 <Input
                   id="nueva-actividad-fecha"
-                  label="Fecha"
+                  label="Fecha límite"
                   type="date"
                   value={fecha}
                   onChange={(e) => setFecha(e.target.value)}
@@ -237,11 +251,27 @@ export const DashboardPage: React.FC = () => {
               </div>
 
               <div className="rumbo-add-form__action">
-                <Button type="submit" variant="primary" size="md">
-                  Agregar
+                <Button type="submit" variant="primary" size="md" disabled={creando}>
+                  {creando ? 'Agregando…' : 'Agregar'}
                 </Button>
               </div>
             </div>
+
+            <Input
+              id="nueva-actividad-descripcion"
+              label="Descripción"
+              type="text"
+              placeholder="Opcional. Ej. Incluir versión móvil"
+              value={descripcion}
+              onChange={(e) => setDescripcion(e.target.value)}
+              className="rumbo-add-form__field-description"
+            />
+
+            {errorCrear && (
+              <p className="rumbo-error-text" role="alert">
+                {errorCrear}
+              </p>
+            )}
           </form>
         </Card>
 
@@ -255,10 +285,11 @@ export const DashboardPage: React.FC = () => {
             {(filtro === 'todas' || filtro === 'proximo') && (
               <Column
                 id="proximo"
-                titulo="Próximos"
+                titulo="Pendientes"
                 actividades={actividadesProximas}
                 onCambiarEstado={cambiarEstado}
                 onEliminar={eliminarActividad}
+                onEditar={editarActividad}
               />
             )}
 
@@ -269,16 +300,18 @@ export const DashboardPage: React.FC = () => {
                 actividades={actividadesProgreso}
                 onCambiarEstado={cambiarEstado}
                 onEliminar={eliminarActividad}
+                onEditar={editarActividad}
               />
             )}
 
             {(filtro === 'todas' || filtro === 'finalizado') && (
               <Column
                 id="finalizado"
-                titulo="Finalizados"
+                titulo="Completadas"
                 actividades={actividadesFinalizadas}
                 onCambiarEstado={cambiarEstado}
                 onEliminar={eliminarActividad}
+                onEditar={editarActividad}
               />
             )}
           </div>
