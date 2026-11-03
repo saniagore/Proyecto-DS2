@@ -1,0 +1,142 @@
+.rumbo-register-layout {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  background-color: var(--color-bg-page);
+}
+
+.rumbo-register-container {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rumbo-register-header {
+  text-align: center;
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.rumbo-register-title {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--color-text-main);
+  letter-spacing: -0.5px;
+}
+
+.rumbo-register-subtitle {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  max-width: 440px;
+  line-height: 1.5;
+}
+
+.rumbo-register-card {
+  width: 100%;
+}
+
+.rumbo-register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Grid de 2 columnas para campos */
+.rumbo-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Selector de uso tipo botón de radio */
+.rumbo-usage-group {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rumbo-usage-legend {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.rumbo-usage-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.rumbo-usage-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 8px;
+  background-color: var(--color-bg-page);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.rumbo-usage-input-native {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.rumbo-usage-input-native:focus-visible + .rumbo-usage-label-text,
+.rumbo-usage-option:has(.rumbo-usage-input-native:focus-visible) {
+  outline: 3px solid var(--color-accent) !important;
+  outline-offset: 2px !important;
+}
+
+.rumbo-usage-option:hover {
+  border-color: var(--color-text-muted);
+}
+
+.rumbo-usage-option--selected {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-text);
+  font-weight: 600;
+}
+
+.rumbo-usage-label-text {
+  font-size: 13px;
+}
+
+/* Responsivo para móviles */
+@media (max-width: 600px) {
+  .rumbo-register-layout {
+    padding: 32px 16px;
+  }
+
+  .rumbo-register-title {
+    font-size: 22px;
+  }
+
+  .rumbo-form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .rumbo-usage-options {
+    grid-template-columns: 1fr;
+  }
+}
