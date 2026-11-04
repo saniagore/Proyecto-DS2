@@ -25,4 +25,28 @@ describe('formatearFechaCorta', () => {
   it('formatea YYYY-MM-DD sin desfase de zona horaria', () => {
     expect(formatearFechaCorta('2026-11-02')).toMatch(/^2 nov/);
   });
+
+  it('formatea objetos Date', () => {
+    expect(formatearFechaCorta(new Date(2026, 10, 3))).toMatch(/^3 nov/);
+  });
+
+  it('devuelve una cadena vacía sin fecha', () => {
+    expect(formatearFechaCorta('')).toBe('');
+  });
+
+  it('devuelve el valor original cuando la fecha no es válida', () => {
+    expect(formatearFechaCorta('fecha-invalida')).toBe('fecha-invalida');
+  });
+});
+
+describe('formatearFechaHoy y obtenerFechaHoyISO', () => {
+  it('formatea la fecha actual en español', async () => {
+    const { formatearFechaHoy } = await import('../utils/dates');
+    expect(formatearFechaHoy(new Date(2026, 10, 3))).toMatch(/martes, 3 de noviembre/);
+  });
+
+  it('obtiene la fecha ISO local con ceros', async () => {
+    const { obtenerFechaHoyISO } = await import('../utils/dates');
+    expect(obtenerFechaHoyISO(new Date(2026, 0, 5))).toBe('2026-01-05');
+  });
 });
