@@ -28,38 +28,32 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Requerido para SonarQube Cloud
+          fetch-depth: 0
 
       - name: Setup Node.js (LTS)
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
 
       - name: 1. Install Dependencies
-        working-directory: ./frontend
         run: npm ci
 
       - name: 2. Check Code Style & Lint
-        working-directory: ./frontend
         run: npm run lint
 
       - name: 3. Type Checking
-        working-directory: ./frontend
         run: npm run type-check
 
       - name: 4. Run Unit Tests with Coverage
-        working-directory: ./frontend
         run: npm run test:coverage
 
       - name: 5. Dry-run Production Build
-        working-directory: ./frontend
         run: npm run build
 
       - name: 6. SonarQube Cloud Scan
-        uses: SonarSource/sonarqube-scan-action@v4.2.2
+        uses: SonarSource/sonarqube-scan-action@v4.3.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
-          projectBaseDir: frontend
+          projectBaseDir: .
