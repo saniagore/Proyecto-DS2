@@ -17,7 +17,7 @@ describe('Pruebas unitarias para storage.ts', () => {
     });
 
     it('debe retornar false si ocurre un error al serializar', () => {
-      const circularRef: any = {};
+      const circularRef: Record<string, unknown> = {};
       circularRef.myself = circularRef;
 
       const result = setStorageItem('circular_key', circularRef);
