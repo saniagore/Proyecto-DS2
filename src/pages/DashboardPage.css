@@ -115,8 +115,9 @@
 
 .rumbo-workspace__header {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .rumbo-workspace__greeting {
@@ -294,6 +295,10 @@
   .rumbo-workspace {
     padding: 24px 16px;
     gap: 24px;
+  }
+
+  .rumbo-workspace__header {
+    flex-direction: column;
   }
 
   .rumbo-stats-grid {
