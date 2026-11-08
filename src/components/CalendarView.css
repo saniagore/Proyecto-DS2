@@ -1,0 +1,186 @@
+.rumbo-calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.rumbo-calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.rumbo-calendar__header h2 {
+  margin: 0;
+  font-size: 17px;
+  color: var(--color-text-main);
+}
+.rumbo-calendar__header p {
+  margin: 4px 0 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+.rumbo-calendar__controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: capitalize;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+.rumbo-calendar__controls button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: var(--color-bg-page);
+  color: var(--color-text-main);
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+}
+.rumbo-calendar__controls button:hover {
+  border-color: var(--color-accent);
+}
+.rumbo-calendar__weekdays,
+.rumbo-calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.rumbo-calendar__weekdays {
+  gap: 4px;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.rumbo-calendar__grid {
+  gap: 4px;
+}
+.rumbo-calendar__day {
+  min-height: 82px;
+  padding: 7px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-page);
+  color: var(--color-text-main);
+  border-radius: var(--radius);
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+}
+.rumbo-calendar__day:hover {
+  border-color: var(--color-accent);
+}
+.rumbo-calendar__day--outside {
+  opacity: 0.38;
+}
+.rumbo-calendar__day--today .rumbo-calendar__day-number {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-accent-text);
+}
+.rumbo-calendar__day--selected {
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+.rumbo-calendar__day-number {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.rumbo-calendar__events {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.rumbo-calendar__event,
+.rumbo-calendar__more {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+.rumbo-calendar__event--proximo {
+  background: rgba(255, 176, 0, 0.18);
+}
+.rumbo-calendar__event--progreso {
+  background: rgba(81, 151, 255, 0.18);
+}
+.rumbo-calendar__event--finalizado {
+  background: rgba(67, 183, 126, 0.18);
+}
+.rumbo-calendar__more {
+  color: var(--color-text-muted);
+  padding-left: 0;
+}
+.rumbo-calendar__selected-day {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 11px 12px;
+  border-radius: var(--radius);
+  background: var(--color-bg-page);
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+.rumbo-calendar__selected-day strong {
+  color: var(--color-text-main);
+  white-space: nowrap;
+}
+.rumbo-calendar__selected-day ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0;
+  padding: 0;
+  color: var(--color-text-main);
+}
+.rumbo-calendar__selected-day li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.rumbo-calendar__status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.rumbo-calendar__status-dot--proximo {
+  background: var(--color-status-proximo);
+}
+.rumbo-calendar__status-dot--progreso {
+  background: var(--color-status-progreso);
+}
+.rumbo-calendar__status-dot--finalizado {
+  background: var(--color-status-finalizado);
+}
+@media (max-width: 680px) {
+  .rumbo-calendar__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .rumbo-calendar__day {
+    min-height: 58px;
+    padding: 4px;
+  }
+  .rumbo-calendar__event {
+    display: none;
+  }
+  .rumbo-calendar__more {
+    font-size: 9px;
+  }
+  .rumbo-calendar__selected-day {
+    flex-direction: column;
+    gap: 5px;
+  }
+}

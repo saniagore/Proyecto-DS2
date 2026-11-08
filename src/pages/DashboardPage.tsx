@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
+import { CalendarView } from '../components/CalendarView';
 import { Column } from '../components/Column';
 import { Input } from '../components/Input';
 import { useActivities } from '../hooks/useActivities';
@@ -8,6 +9,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useRouter } from '../hooks/useRouter';
 import type { CategoriaActividad, FiltroActividad } from '../types/activity';
 import { formatearFechaHoy, obtenerFechaHoyISO } from '../utils/dates';
+import { exportarResumenPdf } from '../utils/report';
 import './DashboardPage.css';
 
 const CATEGORIAS: CategoriaActividad[] = ['Trabajo', 'Estudio', 'Personal'];
@@ -52,6 +54,10 @@ export const DashboardPage: React.FC = () => {
   const handleCerrarSesion = async () => {
     await logout();
     navigate('/login');
+  };
+
+  const handleExportarReporte = () => {
+    exportarResumenPdf(actividades, nombreUsuario);
   };
 
   const handleAgregar = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -148,8 +154,13 @@ export const DashboardPage: React.FC = () => {
       <main className="rumbo-workspace">
         {/* 1. Saludo y fecha de hoy */}
         <header className="rumbo-workspace__header">
-          <h1 className="rumbo-workspace__greeting">Hola, {nombreUsuario}</h1>
-          <p className="rumbo-workspace__date">{fechaDeHoy}</p>
+          <div>
+            <h1 className="rumbo-workspace__greeting">Hola, {nombreUsuario}</h1>
+            <p className="rumbo-workspace__date">{fechaDeHoy}</p>
+          </div>
+          <Button variant="secondary" size="sm" onClick={handleExportarReporte}>
+            Exportar resumen PDF
+          </Button>
         </header>
 
         {/* 2. Tres tarjetas de estadísticas */}
@@ -276,6 +287,10 @@ export const DashboardPage: React.FC = () => {
         </Card>
 
         {/* 4. Tablero de columnas (según filtro) */}
+        <Card padding="md">
+          <CalendarView actividades={actividades} />
+        </Card>
+
         <section className="rumbo-board-section" aria-label="Tablero de actividades">
           <div
             className={`rumbo-board ${
