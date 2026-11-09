@@ -43,7 +43,7 @@ export const activitiesService = {
 
     if (error) {
       console.error('Error al obtener actividades:', error.message);
-      return [];
+      throw new Error(error.message || 'Error al obtener actividades');
     }
 
     return (data ?? []).map(mapearActividadDb);
@@ -62,7 +62,7 @@ export const activitiesService = {
 
     if (error) {
       console.error('Error al obtener actividades del usuario:', error.message);
-      return [];
+      throw new Error(error.message || 'Error al obtener actividades del usuario');
     }
 
     return (data ?? [])

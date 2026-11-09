@@ -17,6 +17,15 @@ describe('utilidades de calendario y reporte', () => {
     expect(dias.some((dia) => dia.iso === '2026-11-01')).toBe(true);
   });
 
+  it('no marca como parte del mes una fecha del mismo mes en otro año', () => {
+    const dias = crearDiasCalendario(new Date(2026, 0, 1));
+
+    expect(dias[0].iso).toBe('2025-12-29');
+    expect(dias[0].perteneceAlMes).toBe(false);
+    expect(dias[3].iso).toBe('2026-01-01');
+    expect(dias[3].perteneceAlMes).toBe(true);
+  });
+
   it('agrupa entregas por su fecha límite e ignora las que no tienen fecha', () => {
     const porFecha = agruparActividadesPorFecha(actividades);
     expect(porFecha['2026-11-10']).toHaveLength(2);

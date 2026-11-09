@@ -15,6 +15,8 @@ export function fechaAISO(fecha: Date): string {
 
 export function crearDiasCalendario(mes: Date): DiaCalendario[] {
   const inicioMes = new Date(mes.getFullYear(), mes.getMonth(), 1);
+  const añoMes = inicioMes.getFullYear();
+  const numeroMes = inicioMes.getMonth();
   const inicio = new Date(inicioMes);
   // Lunes como primer día de la semana.
   inicio.setDate(inicio.getDate() - ((inicio.getDay() + 6) % 7));
@@ -25,7 +27,7 @@ export function crearDiasCalendario(mes: Date): DiaCalendario[] {
     return {
       fecha,
       iso: fechaAISO(fecha),
-      perteneceAlMes: fecha.getMonth() === mes.getMonth(),
+      perteneceAlMes: fecha.getFullYear() === añoMes && fecha.getMonth() === numeroMes,
     };
   });
 }
