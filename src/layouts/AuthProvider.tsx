@@ -11,11 +11,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Sincronizar con la sesión activa de Supabase al montar
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        setUsuario(null);
-      }
-    });
+    void supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        if (!session) {
+          setUsuario(null);
+        }
+      })
+      .catch((error: unknown) => {
+        console.error('No se pudo comprobar la sesión activa:', error);
+      });
 
     const {
       data: { subscription },

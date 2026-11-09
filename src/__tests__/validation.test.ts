@@ -10,8 +10,12 @@ describe('Utilidades de validación', () => {
   it('valida correos electrónicos correctamente', () => {
     expect(validarEmail('ana@correo.com')).toBeNull();
     expect(validarEmail('test.user@sub.dominio.org')).toBeNull();
+    expect(validarEmail(' usuario@correo.com ')).toBeNull();
     expect(validarEmail('')).toBe('Escribe un correo válido, como ana@correo.com.');
     expect(validarEmail('correo-invalido')).toBe('Escribe un correo válido, como ana@correo.com.');
+    expect(validarEmail('usuario@@correo.com')).toBe(
+      'Escribe un correo válido, como ana@correo.com.'
+    );
   });
 
   it('valida longitud de contraseña', () => {
