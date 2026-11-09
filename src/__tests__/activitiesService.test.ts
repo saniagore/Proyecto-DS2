@@ -24,6 +24,7 @@ const mockActividades = [
 
 let estadoSimulado = [...mockActividades];
 let asignacionesSimuladas: { id_actividad: string; id_usuario: string }[] = [];
+let errorLectura: string | null = null;
 
 const buildChain = (result: unknown) => ({
   select: () => buildChain(result),
@@ -43,7 +44,11 @@ vi.mock('../lib/supabaseClient', () => ({
         return {
           select: () => ({
             order: () => ({
-              returns: () => Promise.resolve({ data: estadoSimulado, error: null }),
+              returns: () =>
+                Promise.resolve({
+                  data: errorLectura ? null : estadoSimulado,
+                  error: errorLectura ? { message: errorLectura } : null,
+                }),
             }),
           }),
           insert: (payload: {
@@ -92,6 +97,17 @@ vi.mock('../lib/supabaseClient', () => ({
       }
       if (tabla === 'asignaciones') {
         return {
+          select: () => ({
+            eq: () => ({
+              returns: () =>
+                Promise.resolve({
+                  data: errorLectura
+                    ? null
+                    : estadoSimulado.map((actividad) => ({ actividades: actividad })),
+                  error: errorLectura ? { message: errorLectura } : null,
+                }),
+            }),
+          }),
           insert: (payload: { id_actividad: string; id_usuario: string }) => {
             asignacionesSimuladas.push(payload);
             return Promise.resolve({ error: null });
@@ -110,6 +126,7 @@ describe('activitiesService (Supabase)', () => {
   beforeEach(() => {
     estadoSimulado = [...mockActividades];
     asignacionesSimuladas = [];
+    errorLectura = null;
   });
 
   afterEach(() => {
@@ -120,6 +137,25 @@ describe('activitiesService (Supabase)', () => {
     const list = await activitiesService.obtenerTodas();
     expect(list.length).toBe(2);
     expect(list[0].titulo).toBe('Diseño de UI');
+  });
+
+  it('obtiene las actividades asignadas a un usuario', async () => {
+    const list = await activitiesService.obtenerPorUsuario('user-1');
+
+    expect(list).toHaveLength(2);
+    expect(list[0].estado).toBe('progreso');
+  });
+
+  it('propaga el error al obtener todas las actividades', async () => {
+    errorLectura = 'No se pudo consultar actividades';
+
+    await expect(activitiesService.obtenerTodas()).rejects.toThrow(errorLectura);
+  });
+
+  it('propaga el error al obtener actividades por usuario', async () => {
+    errorLectura = 'No se pudo consultar asignaciones';
+
+    await expect(activitiesService.obtenerPorUsuario('user-1')).rejects.toThrow(errorLectura);
   });
 
   it('mapea correctamente estados de Supabase a estados UI', async () => {
