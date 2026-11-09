@@ -1,0 +1,56 @@
+.rumbo-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.rumbo-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-main);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rumbo-required {
+  color: var(--color-accent);
+}
+
+.rumbo-input {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: var(--color-bg-page);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  line-height: 1.4;
+  transition: border-color 0.15s ease;
+}
+
+.rumbo-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
+.rumbo-input:hover:not(:focus-visible) {
+  border-color: var(--color-text-muted);
+}
+
+.rumbo-field--error .rumbo-input {
+  border-color: var(--color-error);
+}
+
+.rumbo-error-text {
+  font-size: 12px;
+  color: var(--color-error);
+  display: block;
+  min-height: 18px;
+}
+
+.rumbo-helper-text {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}

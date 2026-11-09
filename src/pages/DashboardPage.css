@@ -1,0 +1,349 @@
+.rumbo-dashboard-layout {
+  min-height: 100vh;
+  display: flex;
+  background-color: var(--color-bg-page);
+}
+
+/* Barra lateral fija a 230px */
+.rumbo-sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 16px;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.rumbo-sidebar__top {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.rumbo-sidebar__nav {
+  width: 100%;
+}
+
+.rumbo-sidebar__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rumbo-sidebar__filter-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  color: var(--color-text-main);
+  font-size: 13px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  text-align: left;
+}
+
+.rumbo-sidebar__filter-btn:hover:not(.rumbo-sidebar__filter-btn--active) {
+  border-color: var(--color-border);
+  background-color: rgba(255, 176, 0, 0.05);
+}
+
+.rumbo-sidebar__filter-btn--active {
+  background-color: var(--color-accent);
+  color: var(--color-accent-text);
+  font-weight: 600;
+  border-color: var(--color-accent);
+}
+
+.rumbo-sidebar__filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 4px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.rumbo-sidebar__filter-btn--active .rumbo-sidebar__filter-count {
+  background-color: var(--color-accent-text);
+  color: var(--color-accent);
+}
+
+.rumbo-sidebar__bottom {
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+}
+
+.rumbo-sidebar__user {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rumbo-sidebar__user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Área de trabajo (derecha) */
+.rumbo-workspace {
+  flex: 1;
+  padding: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 1400px;
+}
+
+.rumbo-workspace__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.rumbo-workspace__greeting {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--color-text-main);
+  letter-spacing: -0.5px;
+}
+
+.rumbo-workspace__date {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  text-transform: capitalize;
+}
+
+/* 2. Tarjetas de estadísticas */
+.rumbo-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.rumbo-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rumbo-stat-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rumbo-stat-card__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.rumbo-stat-card__dot--proximo {
+  background-color: var(--color-status-proximo);
+}
+
+.rumbo-stat-card__dot--progreso {
+  background-color: var(--color-status-progreso);
+}
+
+.rumbo-stat-card__dot--finalizado {
+  background-color: var(--color-status-finalizado);
+}
+
+.rumbo-stat-card__label {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rumbo-stat-card__value {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-text-main);
+}
+
+/* 3. Formulario para agregar una actividad */
+.rumbo-add-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rumbo-add-card__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rumbo-add-form__fields {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1.2fr auto;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.rumbo-select {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: var(--color-bg-page);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.rumbo-select:hover:not(:focus-visible) {
+  border-color: var(--color-text-muted);
+}
+
+.rumbo-select option {
+  background-color: var(--color-surface);
+  color: var(--color-text-main);
+}
+
+.rumbo-add-form__action {
+  padding-bottom: 1px;
+}
+
+/* 4. Tablero de 3 columnas o columna única según filtro */
+.rumbo-board-section {
+  width: 100%;
+}
+
+.rumbo-board {
+  display: grid;
+  gap: 20px;
+  width: 100%;
+}
+
+.rumbo-board--three-columns {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.rumbo-board--single-column {
+  grid-template-columns: 1fr;
+}
+
+/* Adaptabilidad para móviles (< 900px) */
+@media (max-width: 899px) {
+  .rumbo-dashboard-layout {
+    flex-direction: column;
+  }
+
+  .rumbo-sidebar {
+    width: 100%;
+    min-height: auto;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    padding: 16px 20px;
+    gap: 16px;
+  }
+
+  .rumbo-sidebar__top {
+    gap: 16px;
+  }
+
+  .rumbo-sidebar__list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .rumbo-sidebar__filter-btn {
+    width: auto;
+    gap: 8px;
+  }
+
+  .rumbo-sidebar__bottom {
+    padding-top: 12px;
+  }
+
+  .rumbo-sidebar__user {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .rumbo-workspace {
+    padding: 24px 16px;
+    gap: 24px;
+  }
+
+  .rumbo-workspace__header {
+    flex-direction: column;
+  }
+
+  .rumbo-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .rumbo-add-form__fields {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .rumbo-add-form__action button {
+    width: 100%;
+  }
+
+  .rumbo-board--three-columns {
+    grid-template-columns: 1fr;
+  }
+}
+/* Estados de carga y error Supabase */
+.rumbo-loading {
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.rumbo-error {
+  padding: 12px 16px;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.08);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.rumbo-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

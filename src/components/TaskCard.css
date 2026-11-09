@@ -1,0 +1,88 @@
+.rumbo-task-card {
+  position: relative;
+  display: flex;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: none;
+  transition: border-color 0.15s ease;
+}
+
+.rumbo-task-card:hover {
+  border-color: var(--color-text-muted);
+}
+
+.rumbo-task-card__stripe {
+  width: 6px;
+  flex-shrink: 0;
+}
+
+.rumbo-task-card--proximo .rumbo-task-card__stripe {
+  background-color: var(--color-status-proximo);
+}
+
+.rumbo-task-card--progreso .rumbo-task-card__stripe {
+  background-color: var(--color-status-progreso);
+}
+
+.rumbo-task-card--finalizado .rumbo-task-card__stripe {
+  background-color: var(--color-status-finalizado);
+}
+
+.rumbo-task-card__body {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.rumbo-task-card__title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--color-text-main);
+  word-break: break-word;
+}
+
+.rumbo-task-card__meta {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rumbo-task-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.rumbo-task-card__description {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  word-break: break-word;
+}
+
+.rumbo-task-card__meta {
+  flex-wrap: wrap;
+}
+
+.rumbo-task-card__due {
+  padding: 1px 6px;
+  border: 1px solid currentColor;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.rumbo-task-card__due--vencida {
+  color: var(--color-error);
+}
+
+.rumbo-task-card__due--hoy {
+  color: var(--color-accent);
+}
