@@ -23,9 +23,9 @@ export function formatearFechaCorta(fechaInput: string | Date): string {
     const partes = fechaInput.split('-');
     if (partes.length === 3) {
       fecha = new Date(
-        parseInt(partes[0], 10),
-        parseInt(partes[1], 10) - 1,
-        parseInt(partes[2], 10)
+        Number.parseInt(partes[0], 10),
+        Number.parseInt(partes[1], 10) - 1,
+        Number.parseInt(partes[2], 10)
       );
     } else {
       fecha = new Date(fechaInput);
@@ -34,7 +34,7 @@ export function formatearFechaCorta(fechaInput: string | Date): string {
     fecha = fechaInput;
   }
 
-  if (isNaN(fecha.getTime())) return String(fechaInput);
+  if (Number.isNaN(fecha.getTime())) return String(fechaInput);
 
   return new Intl.DateTimeFormat('es-ES', {
     day: 'numeric',

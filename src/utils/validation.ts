@@ -1,10 +1,19 @@
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export function validarEmail(email: string): string | null {
+  const correo = email.trim();
+  const posicionArroba = correo.indexOf('@');
+  const ultimoArroba = correo.lastIndexOf('@');
+  const posicionPunto = correo.lastIndexOf('.');
+  const correoValido =
+    posicionArroba > 0 &&
+    posicionArroba === ultimoArroba &&
+    posicionPunto > posicionArroba + 1 &&
+    posicionPunto < correo.length - 1 &&
+    !/\s/.test(correo);
+
   if (!email || !email.trim()) {
     return 'Escribe un correo válido, como ana@correo.com.';
   }
-  if (!EMAIL_REGEX.test(email.trim())) {
+  if (!correoValido) {
     return 'Escribe un correo válido, como ana@correo.com.';
   }
   return null;
